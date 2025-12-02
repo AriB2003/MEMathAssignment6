@@ -20,20 +20,16 @@ function dVdt = string_rate_func01(t,V,string_params)
     L = string_params.L; %length of string
     c = string_params.c; %damping coefficient
     dx = string_params.dx; %horizontal spacing between masses
+
+    [M_mat, K_mat, ec] = construct_2nd_order_matrices(string_params);
+
     %unpack state variable
     U = V(1:n);
     dUdt = V((n+1):(2*n));
     Uf = Uf_func(t);
     dUfdt = dUfdt_func(t);
 
-    tri_diag = -2*eye(n);
-    tri_diag(2:n,1:n-1) = tri_diag(2:n,1:n-1)+eye(n-1);
-    tri_diag(1:n-1,2:n) = tri_diag(1:n-1,2:n)+eye(n-1);
-    cond_end = zeros(n,1);
-    cond_end(end) = 1;
-    Mm = M/n*eye(n);
-    %compute acceleration
-    d2Udt2 = Mm\(n/dx*(Tf*(tri_diag*U+cond_end*Uf)+c*(tri_diag*dUdt+cond_end*dUfdt)));
+    d2Udt2 = M_mat\(-K_mat*U+ec*Uf+c*(-K_mat/Tf*dUdt+ec*dUfdt));
     %assemble state derivative
     dVdt = [dUdt;d2Udt2];
 end
