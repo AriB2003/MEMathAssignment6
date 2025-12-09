@@ -14,15 +14,13 @@ function string_simulation_template01()
     string_params.c = damping_coeff;
     string_params.dx = dx;
     
-    % Calculate the Mode Shapes and Resonate Frequencies
-    omega = damping_coeff*((pi*n_int))/string_length;
-    Xn_x = Bn * sind(omega*x);
-    
     % Calculate Modal Analysis
 
     [M_mat, K_mat, ~] = construct_2nd_order_matrices(string_params);
     [Ur_mat,lambda_mat] = eig(K_mat,M_mat);
     omegas = sqrt(lambda_mat);
+
+    w = 2;
     amplitude_Uf = 0.05;
     omega_Uf = omegas(w,w);
     %list of x points (including the two endpoints)

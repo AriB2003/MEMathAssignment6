@@ -1,5 +1,5 @@
 function string_simulation_template02()
-    num_masses = 200;
+    num_masses = 100;
     total_mass = 1;
     tension_force = 1;
     string_length = 1;
@@ -33,6 +33,9 @@ function string_simulation_template02()
     dUfdt_func = @(t_in) b_spline_pulse_derivative(t_in,w,h);
     string_params.Uf_func = Uf_func;
     string_params.dUfdt_func = dUfdt_func;
+
+    %Calculate mode shape Xn(X) and resonate frequencies c*(pi*n)/L
+    
 
     % Run Solver
 
