@@ -1,5 +1,5 @@
 function string_simulation_template02()
-    num_masses = 100;
+    num_masses = 250;
     total_mass = 1;
     tension_force = 1;
     string_length = 1;
@@ -51,7 +51,16 @@ function string_simulation_template02()
     [tlist,Vlist] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0, 0.01, rk_method("fehlberg"), 4, 10^-6);
     %your code to generate an animation of the system
     % Vpred = (Ur_mat(:,w)*cos(omega_Uf*tlist))';
-    plot_system(xlist, tlist, Vlist, Uf_func, 0, string_params)
+    %define location and filename where video will be stored
+    input_fname = "traveling_wave.avi";
+    %create a videowriter, which will write frames to the animation file
+    writerObj = VideoWriter(input_fname);
+    %must call open before writing any frames
+    open(writerObj);
+
+    plot_system(xlist, tlist, Vlist, Uf_func, 0, string_params, "Traveling Wave at "+string(round(string_params.wave_speed,3))+" m/s", writerObj)
+
+    close(writerObj);
 end
 
 %triangle pulse function

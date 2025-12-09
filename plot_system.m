@@ -1,20 +1,22 @@
-function plot_system(xlist, tlist, Vlist, Uf_func, Vpred, string_params)
+function plot_system(xlist, tlist, Vlist, Uf_func, Vpred, string_params, tit, writerObj)
     close all
-    figure
+    fig1 = figure();
     n = size(Vlist,2)/2;
-    p = plot(xlist,0,"-o", MarkerFaceColor="r",MarkerEdgeColor="r",MarkerSize=4, Color="k",LineWidth=2);
+    p = plot(xlist,zeros(size(xlist)),"-o", MarkerFaceColor="r",MarkerEdgeColor="r",MarkerSize=4, Color="k",LineWidth=2, DisplayName="Modeled");
     if Vpred~=0
         hold on
-        p1 = plot(xlist,0,"-o", MarkerFaceColor="c",MarkerEdgeColor="c",MarkerSize=4, Color="y",LineWidth=2);
+        p1 = plot(xlist,zeros(size(xlist)),"-o", MarkerFaceColor="c",MarkerEdgeColor="c",MarkerSize=4, Color="y",LineWidth=2, DisplayName="Predicted");
     else
-        l1 = xline(0);
+        l1 = xline(0, DisplayName="Wavespeed Tracker");
     end
+    legend()
+    title(tit)
     axis([-0.5,max(xlist)+0.5,-0.5,0.5])
     tdiff = diff(tlist);
     txt = text(-0.3,0.3,string(tlist(1)));
     for j=1:length(tlist)-1
         tic()
-        v = Vlist(j,1:n);
+        v = Vlist(j+1,1:n);
         if Vpred~=0
             r = Vpred(j,:);
             [~,ivmax] = max(abs(v));
@@ -34,10 +36,17 @@ function plot_system(xlist, tlist, Vlist, Uf_func, Vpred, string_params)
             end
             set(l1,"value",x);
         end
-        set(p,"xdata", xlist, "ydata",[0, v, Uf_func(tlist(j))])
+        set(p,"xdata", xlist, "ydata",[0, v, Uf_func(tlist(j+1))])
         set(txt, 'string',string(tlist(j+1)))
         drawnow;
+        %capture a frame (what is currently plotted)
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
         slo=toc();
         pause(max(0,tdiff(j)-slo));
+    end
+    for i = 1:60
+        writeVideo(writerObj,current_frame);
     end
 end
