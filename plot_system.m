@@ -1,19 +1,27 @@
 function plot_system(xlist, tlist, Vlist, Uf_func, Vpred, string_params, tit, writerObj)
     close all
     fig1 = figure();
-    n = size(Vlist,2)/2;
+    n = size(Vlist,2)/2; % number of masses (state vector = [U; dU/dt])
+
+    % initialize main plot
     p = plot(xlist,zeros(size(xlist)),"-o", MarkerFaceColor="r",MarkerEdgeColor="r",MarkerSize=4, Color="k",LineWidth=2, DisplayName="Modeled");
+    
+    % optional tracking line
     if Vpred~=0
         hold on
         p1 = plot(xlist,zeros(size(xlist)),"-o", MarkerFaceColor="c",MarkerEdgeColor="c",MarkerSize=4, Color="y",LineWidth=2, DisplayName="Predicted");
     else
         l1 = xline(0, DisplayName="Wavespeed Tracker");
     end
+
+
     legend()
     title(tit)
     axis([-0.5,max(xlist)+0.5,-0.5,0.5])
-    tdiff = diff(tlist);
-    txt = text(-0.3,0.3,string(tlist(1)));
+    tdiff = diff(tlist); % time step durations for animation pacing
+    txt = text(-0.3,0.3,string(tlist(1)));  % timestamp label
+    
+    % main animation loop
     for j=1:length(tlist)-1
         tic()
         v = Vlist(j+1,1:n);

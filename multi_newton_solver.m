@@ -37,13 +37,18 @@ function [Xn, exit_flag, num_eval] = multi_newton_solver(fun,Xn,solver_params)
     if isfield(solver_params,'numerical_diff')
         numerical_diff = solver_params.numerical_diff;
     end
-    %your code here
+    
+    % Initial function and Jacobian
     [Fxn, Jxn, num_eval] = eval(fun, Xn, numerical_diff);
     iterations = 0;
     while any(abs(Fxn)>ftol) && det(Jxn*Jxn')~=0
         iterations = iterations + 1;
+
+        % Update estimate
         Xn = Xn-Jxn\Fxn;
         Fx0 = Fxn;
+
+        % Recalculate function and jacobian
         [Fxn, Jxn, num_added] = eval(fun, Xn, numerical_diff);
         num_eval = num_added + num_eval;
         dx = norm(Fxn-Fx0);
@@ -61,6 +66,7 @@ function [Xn, exit_flag, num_eval] = multi_newton_solver(fun,Xn,solver_params)
         exit_flag = false;
     end
 end
+
 
 function [F,J,num_eval] = eval(fun,X, numerical_diff)
     if numerical_diff

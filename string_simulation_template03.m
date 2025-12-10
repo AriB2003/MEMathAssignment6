@@ -1,4 +1,5 @@
 function string_simulation_template01()
+    % basic string parameters
     num_masses = 10;
     total_mass = 1;
     tension_force = 1;
@@ -15,7 +16,7 @@ function string_simulation_template01()
     string_params.dx = dx;
     string_params.wave_speed = sqrt(tension_force/(total_mass/string_length));
     
-    % Predicted
+    % analytical mode shape (for comparison)
     n = 4;
     freq = string_params.wave_speed*pi*n/string_params.L;
     omega_freq = pi*n/string_params.L;
@@ -25,8 +26,10 @@ function string_simulation_template01()
     plot(continuous_x, shape(continuous_x), DisplayName="analytical")
     hold on;
 
+    % discrete mass counts
     masses = 4:2:40;
     frequencies = zeros(40,length(masses));
+
     % Calculate Modal Analysis
     for i = 1:length(masses)
         num_masses = masses(i);
@@ -36,24 +39,31 @@ function string_simulation_template01()
 
         [M_mat, K_mat, ~] = construct_2nd_order_matrices(string_params);
         [Ur_mat,lambda_mat] = eig(K_mat,M_mat);
+
         omegas = sqrt(lambda_mat);
-        omega_Uf = omegas(n,n);
+        omega_Uf = omegas(n,n); % nth modal frequency
         d = diag(omegas);
         frequencies(1:length(d),i) = d;%/(2*pi);
+
+        % extract corresponding predicted mode shape
         Vpred = (Ur_mat(:,n)*cos(omega_Uf))';
         xlist = linspace(0,string_length,num_masses+2);
         mode_shape = [0,Vpred,0];
+        
+        % scale + sign alignment with analytical shape
         V = mode_shape*(norm(shape(xlist))/norm(mode_shape));
         s = sign(mode_shape(2))*sign(shape(xlist(2)));
         plot(xlist, s*V, DisplayName=string(num_masses))
     end
     legend()
 
+    % frequency convergence plot
     figure;
     semilogy(masses,abs(frequencies(n,:)-omega_freq)/omega_freq,".")
     xlabel("Masses")
     ylabel("Error Predicted Frequency (%)")
 
+    % compare various masses
     omega_freqs = pi*(1:40)/string_params.L;
     figure;
     plot(1:40, omega_freqs, "." ,DisplayName="actual")
