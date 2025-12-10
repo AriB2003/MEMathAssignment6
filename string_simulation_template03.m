@@ -30,7 +30,7 @@ function string_simulation_template01()
     masses = 4:2:40;
     frequencies = zeros(40,length(masses));
 
-    % Calculate Modal Analysis
+    % Calculate Discrete approximations
     for i = 1:length(masses)
         num_masses = masses(i);
         string_params.n = num_masses;
