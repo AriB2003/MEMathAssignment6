@@ -1,3 +1,17 @@
+%animate and plot the motion of a vibrating string over time.
+%INPUTS
+%xlist: vector of x-positions
+%tlist: vector of time values where state is sampled
+%Vlist: matrix of system states; each row is [U; dU/dt] at a given time
+%       where U is the displacement of the n internal masses
+%Uf_func: function handle giving displacement of the right boundary at time t
+%Vpred: predicted mode shape (optional). If zero, a tracking line is shown
+%string_params: struct containing system parameters for reference/auxiliary logic
+%   string_params.L: string length
+%   string_params.wave_speed: wave propagation speed
+%   string_params.pulse_width: temporal pulse width (used when Vpred=0)
+%tit: title string for the animation figure
+%writerObj: VideoWriter object used to record frames to a video file
 function plot_system(xlist, tlist, Vlist, Uf_func, Vpred, string_params, tit, writerObj)
     close all
     fig1 = figure();
