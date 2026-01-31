@@ -64,5 +64,5 @@ function string_simulation_template01()
     plot(1:40, frequencies(:,masses==32), "." ,DisplayName="32 masses");
     xlabel("# Harmonic")
     ylabel("Frequency (rad/s)")
-    legend();
+    legend(Location="northwest");
 end
